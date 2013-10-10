@@ -6,7 +6,7 @@ public class RandomString {
   
   private static final char[] DIC = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
   
-  private static final Random randGen = new Random(System.currentTimeMillis());
+  private static final Random randGen = new Random();
   
   public static int dicSize() {
     return DIC.length;
