@@ -6,3 +6,5 @@ build/
 *.in
 /build
 /bin
+*.in
+*.out

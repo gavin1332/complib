@@ -64,8 +64,7 @@ public class Crossthemaze {
     e.y = scan.nextInt() - 1;
     e.x = scan.nextInt() - 1;
     
-    Point l = new Point();
-    char f = '\0';
+    char f = 0;
     if (s.x == 0) {
       if (s.y == 0) {
         f = 'E';
@@ -84,26 +83,26 @@ public class Crossthemaze {
     int turn = 0;
     boolean finished = false;
     StringBuilder builder = new StringBuilder();
-    for (; step < 10000; ++step) {
-      if (l.x == e.x && l.y == e.y) {
+    while (step < 10000) {
+      if (s.x == e.x && s.y == e.y) {
         finished = true;
         break;
       }
       
       Point dp = map.get(f);
-      if (l.x + dp.x < 0 || l.x + dp.x >= N || l.y + dp.y < 0 || l.y + dp.y >= N || maze[l.y + dp.y][l.x + dp.x] == '#') {
+      if (s.x + dp.x < 0 || s.x + dp.x >= N || s.y + dp.y < 0 || s.y + dp.y >= N || maze[s.y + dp.y][s.x + dp.x] == '#') {
         if (turn == 3) break;
           
         f = nextDir(f);
         ++turn;
-        --step;
       } else {
-        l.move(dp);
+        s.move(dp);
+        ++step;
         turn = 0;
         builder.append(f);
         
         dp = map.get(leftDir(f));
-        if (l.x + dp.x >= 0 && l.x + dp.x < N && l.y + dp.y >= 0 && l.y + dp.y < N && maze[l.y + dp.y][l.x + dp.x] == '.') {
+        if (s.x + dp.x >= 0 && s.x + dp.x < N && s.y + dp.y >= 0 && s.y + dp.y < N && maze[s.y + dp.y][s.x + dp.x] == '.') {
           f = leftDir(f);
         }
       }
@@ -124,7 +123,7 @@ public class Crossthemaze {
   }
   
   public static void main(String[] args) throws IOException {
-    final String filePrefix = "D-small-practice";
+    final String filePrefix = "D-large-practice";
     Scanner scan = new Scanner(new File(filePrefix + ".in"));
     PrintWriter out = new PrintWriter(new FileWriter(filePrefix + ".out"));
     init();    
