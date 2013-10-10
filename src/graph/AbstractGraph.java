@@ -46,12 +46,11 @@ public class AbstractGraph<E extends Edge> {
 
   private void reverseAjacentMap() {
     reversedMap = new HashMap<Integer, List<E>>();
+    for (int id : getNodes()) {
+      reversedMap.put(id, new LinkedList<E>());
+    }
     for (E e : getAllEdges()) {
       List<E> edges = reversedMap.get(e.getTo());
-      if (edges == null) {
-        edges = new LinkedList<E>();
-        reversedMap.put(e.getTo(), edges);
-      }
       edges.add(e);
     }
   }

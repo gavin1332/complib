@@ -2,7 +2,7 @@ package google;
 
 
 import graph.AbstractGraph;
-import graph.Dijkstra;
+import graph.ShortestPath;
 import graph.Edge;
 
 import java.io.File;
@@ -58,7 +58,7 @@ public class SpaceshipDefence {
         int from = rid.get(room[scan.nextInt()]);
         int to = rid.get(room[scan.nextInt()]);
         LinkedList<Integer> path = new LinkedList<Integer>();
-        int dist = Dijkstra.findShortestPath(g, from, to, path);
+        int dist = ShortestPath.findByDijkstra(g, from, to, path);
         out.println(dist);
       }
     }

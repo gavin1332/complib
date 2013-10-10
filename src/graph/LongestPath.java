@@ -3,12 +3,54 @@ package graph;
 import graph.AbstractGraph.Graph;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-// Longest path between arbitrary two nodes
-public class LongestFloydWarshall {
+import aov.TopologicalSort;
 
-  public static int findLongestPath(final AbstractGraph<?> graph,
+// Only applied for DAG (Directed Acyclic Graph)
+public class LongestPath {
+  
+  // find longest path in the graph
+  public static int findByTopologicalSort(final Graph graph, LinkedList<Integer> path) {
+    final int nodeNum = graph.getNodeNum();
+    int[] order = TopologicalSort.sort(graph);
+    Map<Integer, Integer> distMap = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> previous = new HashMap<Integer, Integer>();
+    int longest = 0;
+    Integer endId = -1;
+    for (int i = 0; i < nodeNum; ++i) {
+      if (graph.getLinkIns(order[i]).isEmpty()) {
+        distMap.put(order[i], 0);
+        continue;
+      }
+      
+      int maxTmp = 0;
+      for (Edge e : graph.getLinkIns(order[i])) {
+        int dist = distMap.get(e.getFrom()) + e.getValue();
+        if (dist > maxTmp) {
+          maxTmp = dist;
+          distMap.put(e.getTo(), maxTmp);
+          if (dist > longest) {
+            longest = dist;
+            endId = e.getTo();
+            previous.put(e.getTo(), e.getFrom());
+          }
+        }
+      }
+    }
+    
+    if (path != null) {
+      while (endId != null) {
+        path.addFirst(endId);
+        endId = previous.get(endId);
+      }
+    }
+    return longest;
+  }
+
+  // find longest path between arbitrary two nodes
+  public static int findByFloydWarshall(final AbstractGraph<?> graph,
       Integer[] dic, int[][] dist) {
     assert (graph != null && dic != null);
 
@@ -64,13 +106,9 @@ public class LongestFloydWarshall {
     g.addEdge(3, 4, 5);
 
     Integer[] dic = g.getNodes();
-    int max = LongestFloydWarshall.findLongestPath(g, dic, null);
-    Map<Integer, Integer> dicMap = new HashMap<Integer, Integer>();
-    for (int i = 0; i < dic.length; ++i) {
-      dicMap.put(dic[i], i);
-    }
-
-    System.out.println(max);
+    int max1 = LongestPath.findByFloydWarshall(g, dic, null);
+    int max2 = LongestPath.findByTopologicalSort(g, null);
+    System.out.println(max1 + " " + max2);
   }
 
 }

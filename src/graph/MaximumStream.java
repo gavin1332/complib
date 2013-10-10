@@ -4,9 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-// Maximum stream
-public class FordFulkerson {
+public class MaximumStream {
   
   public static class MSGraph extends AbstractGraph<MSEdge> {}
   
@@ -77,13 +75,13 @@ public class FordFulkerson {
 
   private Set<MSEdge> path = new HashSet<MSEdge>();
 
-  public FordFulkerson(AbstractGraph<MSEdge> graph, int start, int end) {
+  public MaximumStream(AbstractGraph<MSEdge> graph, int start, int end) {
     this.graph = graph;
     this.start = start;
     this.end = end;
   }
 
-  public int getMaxStream() {
+  public int calcByFordFulkerson() {
     while (hasAugmentPath(start, end)) {
       int minRemain = getMinRemain(path);
       for (MSEdge edge : path) {
@@ -115,8 +113,8 @@ public class FordFulkerson {
         maxStream += edge.getCurr();
       }
     }
-    System.out.println("网路最大流为：" + maxStream);
-    System.out.println("流信息如下：");
+    System.out.println("Maximum Stream: " + maxStream);
+    System.out.println("Info:");
     for (MSEdge edge : graph.getAllEdges()) {
       if (edge.getCapacity() != 0) {
         System.out.println(edge.getFrom() + "->" + edge.getTo() + "\t:\t"
@@ -133,7 +131,7 @@ public class FordFulkerson {
       path.add(edge);
       if (edge.getTo() == to) {
         return true;
-      } else {// 深度递归
+      } else {
         if (hasAugmentPath(edge.getTo(), to)) {
           return true;
         } else {
@@ -176,8 +174,8 @@ public class FordFulkerson {
     g.addEdge(new MSEdge(6, 4, 0));
     g.addEdge(new MSEdge(6, 5, 0));
 
-    FordFulkerson fordFulkerson = new FordFulkerson(g, 1, 6);
-    fordFulkerson.getMaxStream();
+    MaximumStream fordFulkerson = new MaximumStream(g, 1, 6);
+    fordFulkerson.calcByFordFulkerson();
     fordFulkerson.printStreamInfo();
   }
 }
