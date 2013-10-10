@@ -12,12 +12,10 @@ import java.util.Map;
 public class CriticalPath {
 
   public static int getCriticalPath(AbstractGraph<?> graph, List<Integer> path) {
-    if (path == null)
-      return -1;
+    if (path == null) return -1;
 
     int[] order = TopologicalSort.sort(graph);
-    if (order == null)
-      return -1;
+    if (order == null) return -1;
 
     Map<Integer, Integer> orderMap = new HashMap<Integer, Integer>();
     for (int i = 0; i < order.length; ++i) {
@@ -28,7 +26,8 @@ public class CriticalPath {
     earliest[0] = 0;
     for (int i = 1; i < order.length; ++i) {
       earliest[i] = 0;
-      for (int fromId : graph.getLinkIns(order[i])) {
+      for (Edge e : graph.getLinkIns(order[i])) {
+        int fromId = e.getFrom();
         int during = graph.getEdge(fromId, order[i]).getValue();
         int index = orderMap.get(fromId);
         if (earliest[index] + during > earliest[i]) {

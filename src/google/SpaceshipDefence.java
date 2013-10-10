@@ -1,17 +1,16 @@
 package google;
 
 
+import graph.AbstractGraph;
 import graph.Dijkstra;
 import graph.Edge;
-import graph.AbstractGraph;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -58,7 +57,7 @@ public class SpaceshipDefence {
       for (int j = 0; j < count; ++j) {
         int from = rid.get(room[scan.nextInt()]);
         int to = rid.get(room[scan.nextInt()]);
-        List<Integer> path = new ArrayList<Integer>();
+        LinkedList<Integer> path = new LinkedList<Integer>();
         int dist = Dijkstra.findShortestPath(g, from, to, path);
         out.println(dist);
       }

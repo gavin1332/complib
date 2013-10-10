@@ -25,7 +25,7 @@ public class AbstractGraph<E extends Edge> {
 
   private final Map<Integer, List<E>> adjacentMap;
 
-  private Map<Integer, List<Integer>> reversedMap;
+  private Map<Integer, List<E>> reversedMap;
 
   public AbstractGraph() {
     adjacentMap = new HashMap<Integer, List<E>>();
@@ -45,18 +45,18 @@ public class AbstractGraph<E extends Edge> {
   }
 
   private void reverseAjacentMap() {
-    reversedMap = new HashMap<Integer, List<Integer>>();
+    reversedMap = new HashMap<Integer, List<E>>();
     for (E e : getAllEdges()) {
-      List<Integer> fromList = reversedMap.get(e.getTo());
-      if (fromList == null) {
-        fromList = new LinkedList<Integer>();
-        reversedMap.put(e.getTo(), fromList);
+      List<E> edges = reversedMap.get(e.getTo());
+      if (edges == null) {
+        edges = new LinkedList<E>();
+        reversedMap.put(e.getTo(), edges);
       }
-      fromList.add(e.getFrom());
+      edges.add(e);
     }
   }
 
-  public List<Integer> getLinkIns(int to) {
+  public List<E> getLinkIns(int to) {
     if (reversedMap == null) {
       reverseAjacentMap();
     }

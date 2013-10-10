@@ -4,17 +4,15 @@ import graph.AbstractGraph.Graph;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Stack;
-
 
 // Single-source shortest path
 public class Dijkstra {
 
   public static int findShortestPath(AbstractGraph<?> graph, int from, int to,
-      List<Integer> path) {
+      LinkedList<Integer> path) {
     assert(graph != null && graph.hasNode(from) && graph.hasNode(to));
     
     Map<Integer, Integer> dist = new HashMap<Integer, Integer>();
@@ -33,37 +31,30 @@ public class Dijkstra {
     }
 
     while (!reachableMap.isEmpty()) {
-      int currId = -1;
-      int min = Integer.MAX_VALUE;
+      Integer endId = -1;
+      int shortest = Integer.MAX_VALUE;
       for (Entry<Integer, Integer> entry : reachableMap.entrySet()) {
-        if (entry.getValue() < min) {
-          currId = entry.getKey();
-          min = entry.getValue();
+        if (entry.getValue() < shortest) {
+          endId = entry.getKey();
+          shortest = entry.getValue();
         }
       }
-      if (currId == -1) break;
+      if (endId == -1) break;
       
-      reachableMap.remove(currId);
+      reachableMap.remove(endId);
       
-      if (currId == to) {
+      if (endId == to) {
         if (path != null) {
-          Stack<Integer> pathStack = new Stack<Integer>();
-          int id = currId;
-          while (previous.get(id) != null) {
-            pathStack.add(id);
-            id = previous.get(id);
-          }
-          pathStack.add(id);
-          
-          while(!pathStack.empty()) {
-            path.add(pathStack.pop());
+          while (endId != null) {
+            path.addFirst(endId);
+            endId = previous.get(endId);
           }
         }
         return dist.get(to);
       }
 
-      for (Edge e : graph.getLinkOuts(currId)) {
-        int alt = dist.get(currId) + e.getValue();
+      for (Edge e : graph.getLinkOuts(endId)) {
+        int alt = dist.get(endId) + e.getValue();
         if (alt < dist.get(e.getTo())) {
           dist.put(e.getTo(), alt);
           reachableMap.put(e.getTo(), alt);

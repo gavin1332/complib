@@ -15,11 +15,11 @@ public class Prim {
     assert(graph != null && graph.getNodeNum() > 0);
 
     Map<Integer, Integer> value = new HashMap<Integer, Integer>();
-    Map<Integer, Integer> parent = new HashMap<Integer, Integer>();
+    Map<Integer, Edge> previous = new HashMap<Integer, Edge>();
     Integer[] nodes = graph.getNodes();
     for (int id : nodes) {
       value.put(id, Integer.MAX_VALUE);
-      parent.put(id, null);
+      previous.put(id, null);
     }
     
     value.put(nodes[0], 0);
@@ -37,16 +37,16 @@ public class Prim {
       for (Edge e : graph.getLinkOuts(id)) {
         if (value.containsKey(e.getTo()) && e.getValue() < value.get(e.getTo())) {
           value.put(e.getTo(), e.getValue());
-          parent.put(e.getTo(), id);
+          previous.put(e.getTo(), e);
         }
       }
       value.remove(id);
     }
     
     if (edges != null) {
-      for (Entry<Integer, Integer> entry : parent.entrySet()) {
+      for (Entry<Integer, Edge> entry : previous.entrySet()) {
         if (entry.getValue() != null) {
-          edges.add(graph.getEdge(entry.getValue(), entry.getKey()));
+          edges.add(entry.getValue());
         }
       }
     }
