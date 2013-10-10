@@ -2,6 +2,7 @@ package aov;
 
 import graph.Edge;
 import graph.AbstractGraph;
+import graph.GraphCreater;
 import graph.AbstractGraph.Graph;
 
 import java.util.ArrayList;
@@ -59,19 +60,8 @@ public class CriticalPath {
   }
 
   public static void main(String[] args) {
-    Graph g = new Graph();
-    g.addEdge(1, 2, 6);
-    g.addEdge(1, 3, 4);
-    g.addEdge(1, 4, 5);
-    g.addEdge(2, 5, 1);
-    g.addEdge(3, 5, 1);
-    g.addEdge(4, 6, 2);
-    g.addEdge(5, 7, 9);
-    g.addEdge(5, 8, 7);
-    g.addEdge(6, 8, 4);
-    g.addEdge(7, 9, 2);
-    g.addEdge(8, 9, 4);
-
+    GraphCreater creator = new GraphCreater();
+    Graph g = creator.createDAG();
     System.out.println(g);
     List<Integer> path = new ArrayList<Integer>();
     int time = CriticalPath.getCriticalPath(g, path);

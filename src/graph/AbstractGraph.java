@@ -1,14 +1,17 @@
 package graph;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
+// Only support sequential ids starts with 0
 public class AbstractGraph<E extends Edge> {
 
   public static final class Graph extends AbstractGraph<Edge> {
+    public Graph(int nodeNum) {
+      super(nodeNum);
+    }
+
     public void addEdge(int from, int to, int value) {
       addEdge(new Edge(from, to, value));
     }
@@ -18,40 +21,40 @@ public class AbstractGraph<E extends Edge> {
     }
     
     public void addBiDirectedEdge(int id1, int id2, int value) {
-      addEdge(new Edge(id1, id2, value));
-      addEdge(new Edge(id2, id1, value));
+      addEdge(id1, id2, value);
+      addEdge(id2, id1, value);
     }
   }
+  
+  private final int nodeNum;
 
-  private final Map<Integer, List<E>> adjacentMap;
+  private final List<List<E>> adjacentMap;
 
-  private Map<Integer, List<E>> reversedMap;
+  private List<List<E>> reversedMap;
 
-  public AbstractGraph() {
-    adjacentMap = new HashMap<Integer, List<E>>();
+  public AbstractGraph(int nodeNum) {
+    this.nodeNum = nodeNum;
+    adjacentMap = new ArrayList<List<E>>(nodeNum);
+    for (int i = 0; i < nodeNum; ++i) {
+      adjacentMap.add(new LinkedList<E>());
+    }
   }
 
   public int getNodeNum() {
-    return adjacentMap.size();
+    return nodeNum;
   }
 
   public List<E> getLinkOuts(int from) {
-    List<E> edges = adjacentMap.get(from);
-    if (edges == null) {
-      edges = new LinkedList<E>();
-      adjacentMap.put(from, edges);
-    }
-    return edges;
+    return adjacentMap.get(from);
   }
 
   private void reverseAjacentMap() {
-    reversedMap = new HashMap<Integer, List<E>>();
-    for (int id : getNodes()) {
-      reversedMap.put(id, new LinkedList<E>());
+    reversedMap = new ArrayList<List<E>>(nodeNum);
+    for (int i = 0; i < nodeNum; ++i) {
+      reversedMap.add(new LinkedList<E>());
     }
     for (E e : getAllEdges()) {
-      List<E> edges = reversedMap.get(e.getTo());
-      edges.add(e);
+      reversedMap.get(e.getTo()).add(e);
     }
   }
 
@@ -62,55 +65,21 @@ public class AbstractGraph<E extends Edge> {
     return reversedMap.get(to);
   }
 
-  public void addNode(int id) {
-    adjacentMap.put(id, new LinkedList<E>());
-  }
-
-  public boolean hasNode(int id) {
-    return adjacentMap.containsKey(id);
-  }
-
   public void addEdge(E edge) {
-    List<E> edges = adjacentMap.get(edge.getFrom());
-    if (edges == null) {
-      edges = new LinkedList<E>();
-      adjacentMap.put(edge.getFrom(), edges);
-    }
-    edges.add(edge);
-
-    if (!hasNode(edge.getTo())) {
-      addNode(edge.getTo());
-    }
-  }
-
-  public void addBiDirectedEdge(E edge) {
-    addEdge(edge);
+    adjacentMap.get(edge.getFrom()).add(edge);
   }
 
   public E getEdge(int from, int to) {
     List<E> edges = adjacentMap.get(from);
-    if (edges == null)
-      return null;
     for (E e : edges) {
-      if (e.getTo() == to)
-        return e;
+      if (e.getTo() == to) return e;
     }
     return null;
   }
 
-  public final Map<Integer, List<E>> getAdjacentMap() {
-    return adjacentMap;
-  }
-
-  public final Integer[] getNodes() {
-    Integer[] ids = new Integer[adjacentMap.size()];
-    adjacentMap.keySet().toArray(ids);
-    return ids;
-  }
-
   public final List<E> getAllEdges() {
     List<E> edges = new LinkedList<E>();
-    for (List<E> elist : adjacentMap.values()) {
+    for (List<E> elist : adjacentMap) {
       edges.addAll(elist);
     }
     return edges;
@@ -119,32 +88,18 @@ public class AbstractGraph<E extends Edge> {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    for (Entry<Integer, List<E>> entry : adjacentMap.entrySet()) {
-      builder.append(entry.getKey()).append(": ");
-      for (E e : entry.getValue()) {
-        if (e.getValue() != 1) {
-          builder.append('(').append(e.getTo()).append(',')
-              .append(e.getValue()).append(')').append(", ");
+    for (int i = 0; i < nodeNum; ++i) {
+      List<E> elist = adjacentMap.get(i);
+      builder.append(i).append(": ");
+      boolean isFirst = true;
+      for (E e : elist) {
+        if (isFirst) {
+          builder.append(' ');
+          isFirst = false;
         } else {
-          builder.append(e.getTo()).append(", ");
+          builder.append(", ");
         }
-      }
-      builder.append('\n');
-    }
-    return builder.toString();
-  }
-
-  public String toAlphaString() {
-    StringBuilder builder = new StringBuilder();
-    for (Entry<Integer, List<E>> entry : adjacentMap.entrySet()) {
-      builder.append((char) entry.getKey().intValue()).append(": ");
-      for (E e : entry.getValue()) {
-        if (e.getValue() != 1) {
-          builder.append('(').append((char) e.getTo()).append(',')
-              .append(e.getValue()).append(')').append(", ");
-        } else {
-          builder.append((char) e.getTo()).append(", ");
-        }
+        builder.append('(').append(e.getTo()).append(',').append(e.getValue()).append(')');
       }
       builder.append('\n');
     }

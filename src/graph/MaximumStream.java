@@ -6,7 +6,11 @@ import java.util.Set;
 
 public class MaximumStream {
   
-  public static class MSGraph extends AbstractGraph<MSEdge> {}
+  public static class MSGraph extends AbstractGraph<MSEdge> {
+    public MSGraph(int nodeNum) {
+      super(nodeNum);
+    }
+  }
   
   public static class MSEdge extends Edge {
     private int curr;
@@ -154,27 +158,27 @@ public class MaximumStream {
   }
 
   public static void main(String[] args) {
-    MSGraph g = new MSGraph();
-    g.addEdge(new MSEdge(1, 2, 16));
-    g.addEdge(new MSEdge(1, 3, 13));
-    g.addEdge(new MSEdge(2, 1, 0));
-    g.addEdge(new MSEdge(2, 3, 10));
-    g.addEdge(new MSEdge(2, 4, 12));
-    g.addEdge(new MSEdge(3, 2, 4));
-    g.addEdge(new MSEdge(3, 5, 14));
+    MSGraph g = new MSGraph(6);
+    g.addEdge(new MSEdge(0, 1, 16));
+    g.addEdge(new MSEdge(0, 2, 13));
+    g.addEdge(new MSEdge(1, 0, 0));
+    g.addEdge(new MSEdge(1, 2, 10));
+    g.addEdge(new MSEdge(1, 3, 12));
+    g.addEdge(new MSEdge(2, 1, 4));
+    g.addEdge(new MSEdge(2, 4, 14));
+    g.addEdge(new MSEdge(2, 0, 0));
+    g.addEdge(new MSEdge(2, 3, 0));
     g.addEdge(new MSEdge(3, 1, 0));
+    g.addEdge(new MSEdge(3, 2, 9));
+    g.addEdge(new MSEdge(3, 5, 20));
     g.addEdge(new MSEdge(3, 4, 0));
     g.addEdge(new MSEdge(4, 2, 0));
-    g.addEdge(new MSEdge(4, 3, 9));
-    g.addEdge(new MSEdge(4, 6, 20));
-    g.addEdge(new MSEdge(4, 5, 0));
+    g.addEdge(new MSEdge(4, 3, 7));
+    g.addEdge(new MSEdge(4, 5, 4));
     g.addEdge(new MSEdge(5, 3, 0));
-    g.addEdge(new MSEdge(5, 4, 7));
-    g.addEdge(new MSEdge(5, 6, 4));
-    g.addEdge(new MSEdge(6, 4, 0));
-    g.addEdge(new MSEdge(6, 5, 0));
+    g.addEdge(new MSEdge(5, 4, 0));
 
-    MaximumStream fordFulkerson = new MaximumStream(g, 1, 6);
+    MaximumStream fordFulkerson = new MaximumStream(g, 0, 5);
     fordFulkerson.calcByFordFulkerson();
     fordFulkerson.printStreamInfo();
   }

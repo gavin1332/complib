@@ -1,65 +1,47 @@
 package aov;
 
-import graph.Edge;
 import graph.AbstractGraph;
 import graph.AbstractGraph.Graph;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import graph.Edge;
+import graph.GraphCreater;
 
 public class TopologicalSort {
 
   public static int[] sort(AbstractGraph<?> graph) {
     final int nodeNum = graph.getNodeNum();
-    Map<Integer, Integer> into = new HashMap<Integer, Integer>();
-    for (Integer id : graph.getNodes()) {
-      into.put(id, 0);
-    }
+    int[] into = new int[nodeNum];
     for (Edge e : graph.getAllEdges()) {
-      int linkIn = e.getTo();
-      into.put(linkIn, into.get(linkIn) + 1);
+      ++into[e.getTo()];
     }
 
     int[] order = new int[nodeNum];
     for (int i = 0; i < nodeNum; ++i) {
       boolean found = false;
-      for (Entry<Integer, Integer> entry : into.entrySet()) {
-        if (entry.getValue() == 0) {
-          int id = entry.getKey();
+      for (int id = 0; id < nodeNum; ++id) {
+        if (into[id] == 0) {
           order[i] = id;
           for (Edge e : graph.getLinkOuts(id)) {
-            int linkIn = e.getTo();
-            into.put(linkIn, into.get(linkIn) - 1);
+            if (into[e.getTo()] > 0) {
+              --into[e.getTo()];
+            }
           }
-          into.remove(id);
+          into[id] = -1;
           found = true;
           break;
         }
       }
-      if (!found)
-        return null;
+      if (!found) return null;
     }
     return order;
   }
 
   public static void main(String[] args) {
-    Graph g = new Graph();
-    g.addConnection('a', 'c');
-    g.addConnection('c', 'd');
-    g.addConnection('a', 'g');
-    g.addConnection('d', 'g');
-    g.addConnection('d', 'e');
-    g.addConnection('g', 'f');
-    g.addConnection('f', 'e');
-    g.addConnection('b', 'g');
-    g.addConnection('b', 'h');
-    g.addConnection('h', 'f');
-
+    GraphCreater creator = new GraphCreater();
+    Graph g = creator.createDAG();
     System.out.println(g);
     int[] order = TopologicalSort.sort(g);
     for (int i = 0; i < order.length; ++i) {
-      System.out.println(order[i]);
+      System.out.print(order[i] + " ");
     }
   }
 }

@@ -2,7 +2,6 @@ package graph;
 
 import graph.AbstractGraph.Graph;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -11,27 +10,28 @@ import java.util.Map.Entry;
 public class ShortestPath {
 
   //Single-source shortest path
-  public static int findByDijkstra(AbstractGraph<?> graph, int from, int to,
-      LinkedList<Integer> path) {
-    assert(graph != null && graph.hasNode(from) && graph.hasNode(to));
+  public static int findByDijkstra(final AbstractGraph<?> graph, int from,
+      int to, LinkedList<Integer> path) {
+    final int nodeNum = graph.getNodeNum();
+    assert(graph != null && from < nodeNum && to < nodeNum);
     
-    Map<Integer, Integer> dist = new HashMap<Integer, Integer>();
-    Map<Integer, Integer> previous = new HashMap<Integer, Integer>();
+    int[] dist = new int[nodeNum];
+    int[] previous = new int[nodeNum];
     Map<Integer, Integer> reachableMap = new LinkedHashMap<Integer, Integer>();
 
-    for (int nodeId : graph.getNodes()) {
-      if (nodeId == from) {
-        dist.put(from, 0);
+    for (int id = 0; id < nodeNum; ++id) {
+      if (id == from) {
+        dist[from] = 0;
         reachableMap.put(from, 0);
       } else {
-        dist.put(nodeId, Integer.MAX_VALUE);
-        reachableMap.put(nodeId, Integer.MAX_VALUE);
+        dist[id] = Integer.MAX_VALUE;
+        reachableMap.put(id, Integer.MAX_VALUE);
       }
-      previous.put(nodeId, null);
+      previous[id] = -1;
     }
 
     while (!reachableMap.isEmpty()) {
-      Integer endId = -1;
+      int endId = -1;
       int shortest = Integer.MAX_VALUE;
       for (Entry<Integer, Integer> entry : reachableMap.entrySet()) {
         if (entry.getValue() < shortest) {
@@ -45,20 +45,20 @@ public class ShortestPath {
       
       if (endId == to) {
         if (path != null) {
-          while (endId != null) {
+          while (endId != -1) {
             path.addFirst(endId);
-            endId = previous.get(endId);
+            endId = previous[endId];
           }
         }
-        return dist.get(to);
+        return dist[to];
       }
 
       for (Edge e : graph.getLinkOuts(endId)) {
-        int alt = dist.get(endId) + e.getValue();
-        if (alt < dist.get(e.getTo())) {
-          dist.put(e.getTo(), alt);
+        int alt = dist[endId] + e.getValue();
+        if (alt < dist[e.getTo()]) {
+          dist[e.getTo()] = alt;
           reachableMap.put(e.getTo(), alt);
-          previous.put(e.getTo(), e.getFrom());
+          previous[e.getTo()] = e.getFrom();
         }
       }
     }
@@ -67,15 +67,10 @@ public class ShortestPath {
   }
 
   //Shortest path between arbitrary two nodes
-  public static int[][] findByFloydWarshall(final AbstractGraph<?> graph, Integer[] dic) {
-    assert(graph != null && dic != null);
+  public static int[][] findByFloydWarshall(final AbstractGraph<?> graph) {
+    assert(graph != null);
     
     final int nodeNum = graph.getNodeNum();
-    Map<Integer, Integer> dicMap = new HashMap<Integer, Integer>();
-    for (int i = 0; i < nodeNum; ++i) {
-      dicMap.put(dic[i], i);
-    }
-    
     int[][] dist = new int[nodeNum][];
     for (int i = 0; i < nodeNum; ++i) {
       dist[i] = new int[nodeNum];
@@ -84,7 +79,7 @@ public class ShortestPath {
       }
     }
     for (Edge e : graph.getAllEdges()) {
-      dist[dicMap.get(e.getFrom())][dicMap.get(e.getTo())] = e.getValue();
+      dist[e.getFrom()][e.getTo()] = e.getValue();
     }
 
     for (int k = 0; k < nodeNum; ++k) {
@@ -106,27 +101,14 @@ public class ShortestPath {
   }
 
   public static void main(String[] args) {
-    Graph g = new Graph();
-    g.addEdge(1, 2, 1);
-    g.addEdge(1, 3, 3);
-    g.addEdge(1, 4, 2);
-    g.addEdge(4, 2, 3);
-    g.addEdge(2, 5, 4);
-    g.addEdge(4, 5, 5);
-    g.addEdge(3, 4, 5);
-
-    Integer[] dic = g.getNodes();
-    int[][] dist = ShortestPath.findByFloydWarshall(g, dic);
-    Map<Integer, Integer> dicMap = new HashMap<Integer, Integer>();
-    for (int i = 0; i < dic.length; ++i) {
-      dicMap.put(dic[i], i);
-    }
-
-    for (int i = 0; i < dic.length; ++i) {
-      for (int j = 0; j < dic.length; ++j) {
-        if (ShortestPath.findByDijkstra(g, dic[i], dic[j], null) 
-            != dist[dicMap.get(dic[i])][dicMap.get(dic[j])]) {
-          System.out.println(dic[i] + "->" + dic[j] + ": " + dist[dicMap.get(dic[i])][dicMap.get(dic[j])]);
+    GraphCreater creator = new GraphCreater();
+    Graph g = creator.createDAG();
+    final int nodeNum = g.getNodeNum();
+    int[][] dist = ShortestPath.findByFloydWarshall(g);
+    for (int i = 0; i < nodeNum; ++i) {
+      for (int j = 0; j < nodeNum; ++j) {
+        if (ShortestPath.findByDijkstra(g, i, j, null) != dist[i][j]) {
+          System.out.println(i + "->" + j + ": " + dist[i][j]);
         }
       }
     }

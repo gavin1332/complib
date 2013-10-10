@@ -12,7 +12,8 @@ import aov.TopologicalSort;
 public class LongestPath {
   
   // find longest path in the graph
-  public static int findByTopologicalSort(final Graph graph, LinkedList<Integer> path) {
+  public static int findByTopologicalSort(final AbstractGraph<?> graph,
+      LinkedList<Integer> path) {
     final int nodeNum = graph.getNodeNum();
     int[] order = TopologicalSort.sort(graph);
     Map<Integer, Integer> distMap = new HashMap<Integer, Integer>();
@@ -50,16 +51,10 @@ public class LongestPath {
   }
 
   // find longest path between arbitrary two nodes
-  public static int findByFloydWarshall(final AbstractGraph<?> graph,
-      Integer[] dic, int[][] dist) {
-    assert (graph != null && dic != null);
+  public static int findByFloydWarshall(final AbstractGraph<?> graph, int[][] dist) {
+    assert (graph != null);
 
     final int nodeNum = graph.getNodeNum();
-    Map<Integer, Integer> dicMap = new HashMap<Integer, Integer>();
-    for (int i = 0; i < nodeNum; ++i) {
-      dicMap.put(dic[i], i);
-    }
-
     if (dist == null) {
       dist = new int[nodeNum][];
     }
@@ -70,7 +65,7 @@ public class LongestPath {
       }
     }
     for (Edge e : graph.getAllEdges()) {
-      dist[dicMap.get(e.getFrom())][dicMap.get(e.getTo())] = e.getValue();
+      dist[e.getFrom()][e.getTo()] = e.getValue();
     }
 
     int max = 0;
@@ -96,17 +91,9 @@ public class LongestPath {
   }
 
   public static void main(String[] argv) {
-    Graph g = new Graph();
-    g.addEdge(1, 2, 1);
-    g.addEdge(1, 3, 3);
-    g.addEdge(1, 4, 2);
-    g.addEdge(4, 2, 3);
-    g.addEdge(2, 5, 4);
-    g.addEdge(4, 5, 5);
-    g.addEdge(3, 4, 5);
-
-    Integer[] dic = g.getNodes();
-    int max1 = LongestPath.findByFloydWarshall(g, dic, null);
+    GraphCreater creator = new GraphCreater();
+    Graph g = creator.createDAG();
+    int max1 = LongestPath.findByFloydWarshall(g, null);
     int max2 = LongestPath.findByTopologicalSort(g, null);
     System.out.println(max1 + " " + max2);
   }

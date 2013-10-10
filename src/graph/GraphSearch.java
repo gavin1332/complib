@@ -86,7 +86,8 @@ public class GraphSearch {
     if (graph == null) {
       throw new IllegalArgumentException();
     }
-    for (Integer id : graph.getNodes()) {
+    int nodeNum = graph.getNodeNum();
+    for (int id = 0; id < nodeNum; ++id) {
       Node node = pool.getOrCreate(id);
       if (node.isTouched())
         continue;
@@ -127,7 +128,8 @@ public class GraphSearch {
     if (graph == null) {
       throw new IllegalArgumentException();
     }
-    for (Integer id : graph.getNodes()) {
+    int nodeNum = graph.getNodeNum();
+    for (int id = 0; id < nodeNum; ++id) {
       Node node = pool.getOrCreate(id);
       if (node.isTouched())
         continue;

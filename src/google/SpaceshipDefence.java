@@ -1,9 +1,8 @@
 package google;
 
-
-import graph.AbstractGraph;
-import graph.ShortestPath;
+import graph.AbstractGraph.Graph;
 import graph.Edge;
+import graph.ShortestPath;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,7 +13,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-
 
 
 public class SpaceshipDefence {
@@ -40,10 +38,7 @@ public class SpaceshipDefence {
         e.setValue(id++);
       }
       
-      AbstractGraph<Edge> g = new AbstractGraph<Edge>();
-      for (int j = 0; j < id; ++j) {
-        g.addNode(j);
-      }
+      Graph g = new Graph(id);
       count = scan.nextInt();
       for (int j = 0; j < count; ++j) {
         int from = rid.get(room[scan.nextInt()]);
