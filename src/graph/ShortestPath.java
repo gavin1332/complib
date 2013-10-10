@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+// The longest path in DAG (Directed Acyclic Graph) can be found by changing 
+// path weights from positive to negative and do shortest path search
 public class ShortestPath {
 
   //Single-source shortest path
