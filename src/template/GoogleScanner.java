@@ -8,21 +8,19 @@ import java.util.Scanner;
 
 public class GoogleScanner {
   
-  private static String proceed(Scanner scan) {
+  private String proceed(Scanner scan) {
     return "";
   }
-  
-  private static void init() {}
   
   public static void main(String[] args) throws IOException {
     final String filePrefix = "A-small-practice";
     Scanner scan = new Scanner(new File(filePrefix + ".in"));
     PrintWriter out = new PrintWriter(new FileWriter(filePrefix + ".out"));
-    init();
-    
+
+    GoogleScanner google = new GoogleScanner();
     int caseNum = scan.nextInt();
     for (int i = 0; i < caseNum; ++i) {
-      String strResult = proceed(scan);
+      String strResult = google.proceed(scan);
       out.println("Case #" + (i + 1) + ": " + strResult);
     }
     scan.close();

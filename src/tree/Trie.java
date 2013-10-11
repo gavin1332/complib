@@ -4,33 +4,37 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Stack;
 
-public class Trie {
+public class Trie<T> {
   
-  interface Visitor {
-    void visit(Node node);
+  interface Visitor<T> {
+    void visit(Node<T> node);
   }
   
-  public static class Node {
-    private char value;
+  public static class Node<T> {
+    private T value;
     private boolean touched;
-    private Map<Character, Node> children;
+    private Map<T, Node<T>> children;
 
-    public Node(char value) {
+    public Node(T value) {
       this.value = value;
       touched = false;
-      children = new LinkedHashMap<Character, Node>();
+      children = new LinkedHashMap<T, Node<T>>();
+    }
+    
+    public boolean hasChild(T value) {
+      return children.containsKey(value);
     }
 
-    public Node addChild(char value) {
-      Node node = children.get(value);
+    public Node<T> addChild(T value) {
+      Node<T> node = children.get(value);
       if (node == null) {
-        node = new Node(value);
+        node = new Node<T>(value);
         children.put(value, node);
       }
       return node;
     }
 
-    public char getVaue() {
+    public T getVaue() {
       return value;
     }
     
@@ -42,38 +46,43 @@ public class Trie {
       touched = true;
     }
 
-    public Map<Character, Node> getChildren() {
+    public Map<T, Node<T>> getChildren() {
       return children;
     }
   }
   
-  private Node root;
+  private Node<T> root;
   
-  public Trie() {
-    root = new Node('\0');
+  public Trie(Node<T> root) {
+    this.root = root;
   }
   
-  public void addString(String str) {
-    Node node = root;
-    for (char ch : str.toCharArray()) {
-      node = node.addChild(ch);
+  public int addSequence(T[] seq) {
+    Node<T> node = root;
+    int newNodeNum = 0;
+    for (T t : seq) {
+      if (!node.hasChild(t)) {
+        ++newNodeNum;
+      }
+      node = node.addChild(t);
     }
+    return newNodeNum;
   }
   
-  public Node getRoot() {
+  public Node<T> getRoot() {
     return root;
   }
   
-  public void traverse(Visitor visitor) {
-    Stack<Node> stack = new Stack<Node>();
+  public void traverse(Visitor<T> visitor) {
+    Stack<Node<T>> stack = new Stack<Node<T>>();
     stack.push(root);
     while (!stack.empty()) {
-      Node node = stack.pop();
+      Node<T> node = stack.pop();
       if (node.isTouched()) {
         visitor.visit(node);
         continue;
       }
-      for (Node child : node.getChildren().values()) {
+      for (Node<T> child : node.getChildren().values()) {
         stack.push(child);
       }
       node.setTouched();
