@@ -1,1 +1,1 @@
-A Customized library for online programming competition.
+A customized library for online programming competition.
