@@ -2,7 +2,7 @@ package tree;
 
 import java.util.Stack;
 
-public class BT {
+public class BinaryTree {
 
   protected static class Node {
     int value;

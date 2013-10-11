@@ -1,6 +1,6 @@
 package tree;
 
-public class BST extends BT {
+public class BST extends BinaryTree {
 
   public static void insert(Node root, int value) {
     if (root == null) {
